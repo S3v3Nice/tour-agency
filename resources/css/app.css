@@ -1,0 +1,12 @@
+:root {
+    --background-color: #ffffff;
+    --background-color-muted: #f6f6f6;
+    --outline-color: #cccccc;
+    --text-color: #444;
+    --scrollbar-track-color: #091e420f;
+    --scrollbar-thumb-color: #091e4224;
+
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
