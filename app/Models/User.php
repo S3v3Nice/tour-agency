@@ -15,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string|null $first_name
  * @property string|null $last_name
- * @property int $is_admin
+ * @property bool $is_admin
  * @property mixed $password
  * @property string|null $remember_token
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -73,5 +73,6 @@ class User extends Authenticatable
      */
     protected $casts = [
         'password' => 'hashed',
+        'is_admin' => 'boolean'
     ];
 }
