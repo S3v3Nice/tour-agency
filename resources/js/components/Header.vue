@@ -6,7 +6,7 @@
     <div class="container">
       <header
           class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-        <router-link to="/">
+        <router-link :to="{ name: 'home' }">
           <img class="logo" src="/public/images/logo.png" height="45" alt="TourAgency"/>
         </router-link>
 
@@ -14,7 +14,7 @@
         </ul>
 
         <div class="col-md-3 text-end">
-          <router-link to="/login" type="button" class="btn btn-outline-primary me-2">Войти</router-link>
+          <router-link :to="{ name: 'login' }" type="button" class="btn btn-outline-primary me-2">Войти</router-link>
         </div>
         <!--        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"-->
         <!--           aria-haspopup="true" aria-expanded="false">-->
@@ -22,9 +22,9 @@
         <!--        </a>-->
 
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/profile">
+          <router-link :to="{ name: 'profile' }" class="dropdown-item">
             Личный кабинет
-          </a>
+          </router-link>
           <a class="dropdown-item" href="/logout"
              onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
             Выйти
