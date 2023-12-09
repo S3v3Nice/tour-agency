@@ -4,6 +4,7 @@ import Register from "./components/Register.vue";
 import NotFound from "./components/NotFound.vue";
 import {createRouter, createWebHistory} from "vue-router";
 import {nextTick} from "vue";
+import Profile from "./components/Profile.vue";
 
 const APP_NAME = 'Tour Agency';
 
@@ -33,6 +34,16 @@ const routes = [
         meta:
             {
                 title: 'Регистрация'
+            }
+    },
+
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile,
+        meta:
+            {
+                title: 'Личный кабинет'
             }
     },
     {
