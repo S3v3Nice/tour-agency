@@ -1,11 +1,11 @@
 import axios from 'axios'
-import { defineStore } from 'pinia'
+import {defineStore} from 'pinia'
 
 interface UserState {
     id: bigint | null
     email: string
-    first_name: string
-    last_name: string
+    first_name: string | null
+    last_name: string | null
     is_admin: boolean
 }
 

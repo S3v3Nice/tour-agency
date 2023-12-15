@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
+    use PasswordValidationRulesTrait;
+
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -39,20 +43,42 @@ class AuthController extends Controller
             );
         }
 
-        $request->session()->regenerate();
         return response()->json(['success' => true]);
     }
 
     public function register(Request $request): JsonResponse
     {
-        // TODO Implement registration
+        $validator = Validator::make($request->all(), [
+            'email'    => ['required', 'email', Rule::unique(User::class)],
+            'password' => $this->getPasswordRules(),
+            'password_confirmation' => ['required']
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'errors'  => $validator->errors(),
+                ]
+            );
+        }
+
+        $attributes = [
+            'email'    => $request->get('email'),
+            'password' => $request->get('password'),
+        ];
+
+        $user = User::create($attributes);
+        Auth::login($user, $request->get('remember', false));
 
         return response()->json(['success' => true]);
     }
 
-    public function logout(): JsonResponse
+    public function logout(Request $request): JsonResponse
     {
         Auth::logout();
+        $request->session()->flush();
+
         return response()->json(['success' => true]);
     }
 }

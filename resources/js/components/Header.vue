@@ -3,9 +3,8 @@ import {useAuthStore} from "../stores/auth.ts";
 
 const authStore = useAuthStore()
 
-async function logout() {
-  await axios.get('/sanctum/csrf-cookie')
-  await axios.post('/logout').then(() => {
+function logout() {
+  axios.post('/logout').then(() => {
     authStore.reset()
   })
 }

@@ -75,4 +75,8 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_admin' => 'boolean'
     ];
+
+    protected $attributes = [
+        'is_admin' => false,
+    ];
 }

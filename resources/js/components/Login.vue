@@ -13,11 +13,11 @@ const loginData = ref({
 const errors = ref({})
 const isProcessing = ref(false)
 
-async function login() {
+function login() {
   if (isProcessing.value) return
 
   isProcessing.value = true
-  await axios.post('/login', loginData.value).then((response) => {
+  axios.post('/login', loginData.value).then((response) => {
     if (!response.data.success) {
       errors.value = response.data.errors
       return
