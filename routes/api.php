@@ -19,3 +19,4 @@ Route::get('/user', function (Request $request) {
 });
 
 Route::get('/tour-countries', [\App\Http\Controllers\TourCountryController::class, 'getTourCountries']);
+Route::get('/tour-country/{countrySlug}', [\App\Http\Controllers\TourCountryController::class, 'getTourCountry']);

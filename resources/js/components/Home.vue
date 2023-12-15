@@ -1,6 +1,7 @@
 <script setup>
 import Header from "./Header.vue";
 import {onMounted, ref} from "vue";
+import {getAbsolutePath} from "../helpers.js";
 
 const isLoading = ref(false)
 const tourCountries = ref([])
@@ -28,7 +29,7 @@ function loadTourCountries() {
     <div v-for="country in tourCountries" :key="country.id" class="col-md-4 mb-4">
       <router-link :to="{name: 'tour-country', params: {slug: country.slug}}">
         <div class="card">
-          <img :src="country.image_path" class="card-img-top" :alt="country.name">
+          <img :src="getAbsolutePath(country.image_path)" class="card-img-top" :alt="country.name">
           <div class="card-body">
             <a class="card-title">{{ country.name }}</a>
           </div>

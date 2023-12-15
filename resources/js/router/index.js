@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from "vue-router";
 import {nextTick} from "vue";
 import routes from "./routes.js";
 import {useAuthStore} from "../stores/auth.ts";
+import {changeTitle} from "../helpers.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -34,7 +35,7 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to) => {
     nextTick(() => {
-        document.title = (to.meta['title'] + ' - ' + import.meta.env.VITE_APP_NAME)
+        changeTitle(to.meta['title'])
     })
 })
 

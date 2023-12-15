@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * App\Models\TourCountry
@@ -40,6 +41,13 @@ class TourCountry extends Model
     public function cities(): HasMany
     {
         return $this->hasMany(TourCity::class, 'country_id');
+    }
+
+    public function tours(): HasManyThrough
+    {
+        return $this->hasManyThrough(Tour::class, TourHotel::class, 'city_id', 'hotel_id')
+                    ->whereIn('tour_hotels.city_id', $this->cities()->pluck('id'))
+                    ->with('hotel.city'); // Загружаем связанные данные
     }
 
     public function getRouteKeyName(): string

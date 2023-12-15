@@ -12,4 +12,14 @@ class TourCountryController extends Controller
     {
         return response()->json(TourCountry::all());
     }
+
+    public function getTourCountry(Request $request, string $countrySlug): JsonResponse
+    {
+        $searchResults = TourCountry::whereSlug($countrySlug)->with('tours')->get();
+        if ($searchResults->count() === 0) {
+            return response()->json(null);
+        }
+
+        return response()->json($searchResults[0]);
+    }
 }
