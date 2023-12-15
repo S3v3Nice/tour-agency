@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/tour-countries', [\App\Http\Controllers\TourCountryController::class, 'getTourCountries']);

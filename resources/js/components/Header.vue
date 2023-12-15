@@ -11,7 +11,7 @@ function logout() {
 </script>
 
 <template>
-  <div class="container-fluid header-custom">
+  <div class="header-custom">
     <div class="container">
       <header
           class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">

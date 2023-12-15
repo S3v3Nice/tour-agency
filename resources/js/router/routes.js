@@ -3,6 +3,7 @@ import Login from "../components/Login.vue";
 import Register from "../components/Register.vue";
 import Profile from "../components/Profile.vue";
 import NotFound from "../components/NotFound.vue";
+import TourCountry from "../components/TourCountry.vue";
 
 export default [
     {
@@ -34,7 +35,6 @@ export default [
                 guest: true,
             }
     },
-
     {
         path: '/profile',
         name: 'profile',
@@ -42,6 +42,17 @@ export default [
         meta:
             {
                 title: 'Личный кабинет',
+                authenticated: true,
+            }
+    },
+    {
+        path: '/tours/:slug',
+        name: 'tour-country',
+        component: TourCountry,
+        props: true,
+        meta:
+            {
+                title: 'Туры по направлению',
                 authenticated: true,
             }
     },
