@@ -1,4 +1,14 @@
 <script setup>
+import {useAuthStore} from "../stores/auth.ts";
+
+const authStore = useAuthStore()
+
+async function logout() {
+  await axios.get('/sanctum/csrf-cookie')
+  await axios.post('/logout').then(() => {
+    authStore.reset()
+  })
+}
 </script>
 
 <template>
@@ -13,25 +23,21 @@
         <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0 navs">
         </ul>
 
-        <div class="col-md-3 text-end">
+        <div v-if="!authStore.isAuthenticated" class="col-md-3 text-end">
           <router-link :to="{ name: 'login' }" type="button" class="btn btn-outline-primary me-2">Войти</router-link>
         </div>
-        <!--        <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"-->
-        <!--           aria-haspopup="true" aria-expanded="false">-->
-        <!--          {{ Auth::user()->email }}-->
-        <!--        </a>-->
+        <a v-else id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+           aria-haspopup="true" aria-expanded="false">
+          {{ authStore.email }}
+        </a>
 
         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
           <router-link :to="{ name: 'profile' }" class="dropdown-item">
             Личный кабинет
           </router-link>
-          <a class="dropdown-item" href="/logout"
-             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+          <a type="button" class="dropdown-item" @click="logout">
             Выйти
           </a>
-
-          <form id="logout-form" action="" method="POST" class="d-none">
-          </form>
         </div>
       </header>
     </div>
