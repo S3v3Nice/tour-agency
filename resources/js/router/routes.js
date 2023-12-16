@@ -77,7 +77,7 @@ export default [
         children:
             [
                 {
-                    path: '/analytics',
+                    path: 'analytics',
                     name: 'analytics',
                     component: Analytics,
                     meta:
@@ -88,7 +88,7 @@ export default [
                         }
                 },
                 {
-                    path: '/users',
+                    path: 'users',
                     name: 'users',
                     component: Users,
                     meta:
@@ -99,7 +99,7 @@ export default [
                         }
                 },
                 {
-                    path: '/countries',
+                    path: 'countries',
                     name: 'countries',
                     component: TourCountries,
                     meta:
@@ -110,7 +110,7 @@ export default [
                         }
                 },
                 {
-                    path: '/cities',
+                    path: 'cities',
                     name: 'cities',
                     component: TourCities,
                     meta:
@@ -121,7 +121,7 @@ export default [
                         }
                 },
                 {
-                    path: '/hotels',
+                    path: 'hotels',
                     name: 'hotels',
                     component: TourHotels,
                     meta:
@@ -132,7 +132,7 @@ export default [
                         }
                 },
                 {
-                    path: '/bookings',
+                    path: 'bookings',
                     name: 'bookings',
                     component: TourBookings,
                     meta:
@@ -143,7 +143,7 @@ export default [
                         }
                 },
                 {
-                    path: '/payments',
+                    path: 'payments',
                     name: 'payments',
                     component: Payments,
                     meta:
