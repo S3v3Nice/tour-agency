@@ -29,6 +29,13 @@ router.beforeEach((to, from, next) => {
             }
         }
 
+        if (to.matched.some(record => record.meta.admin)) {
+            if (!authStore.is_admin) {
+                next({ name: '' })
+                return
+            }
+        }
+
         next()
     })
 })
