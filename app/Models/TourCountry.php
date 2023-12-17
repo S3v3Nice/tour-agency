@@ -31,6 +31,8 @@ class TourCountry extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'slug',
         'name',
@@ -47,11 +49,6 @@ class TourCountry extends Model
     {
         return $this->hasManyThrough(Tour::class, TourHotel::class, 'city_id', 'hotel_id')
                     ->whereIn('tour_hotels.city_id', $this->cities()->pluck('id'))
-                    ->with('hotel.city'); // Загружаем связанные данные
-    }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
+                    ->with('hotel.city');
     }
 }

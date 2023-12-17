@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TourCity;
 use App\Models\TourCountry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,32 +10,21 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\File;
-use Illuminate\Validation\Rules\Unique;
 
-class TourCountryController extends Controller
+class TourCityController extends Controller
 {
     const MAX_IMAGE_SIZE_MB = 5;
 
-    public function getTourCountries(Request $request): JsonResponse
+    public function getTourCities(Request $request): JsonResponse
     {
-        return response()->json(TourCountry::all());
+        return response()->json(TourCity::with('country')->get());
     }
 
-    public function getTourCountry(Request $request, string $countrySlug): JsonResponse
-    {
-        $searchResults = TourCountry::whereSlug($countrySlug)->with('tours')->get();
-        if ($searchResults->count() === 0) {
-            return response()->json(null);
-        }
-
-        return response()->json($searchResults[0]);
-    }
-
-    public function addTourCountry(Request $request): JsonResponse
+    public function addTourCity(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'slug'        => ['required', 'string', new Unique(TourCountry::class)],
             'name'        => ['required', 'string'],
+            'country_id'  => ['required', 'int', Rule::exists(TourCountry::class, 'id')],
             'description' => ['required', 'string'],
             'image'       => [
                 'required',
@@ -58,24 +48,26 @@ class TourCountryController extends Controller
             );
         }
 
-        $attributes = $request->only(['slug', 'name', 'description']);
+        $attributes = $request->only(['name', 'description']);
 
         $image           = $request->file('image');
-        $imagePath       = $image->storeAs('public/tour_countries/', $image->hashName());
+        $imagePath       = $image->storeAs('public/tour_cities/', $image->hashName());
         $publicImagePath = substr_replace($imagePath, 'storage/', 0, strlen('public/'));
 
         $attributes = array_merge($attributes, ['image_path' => $publicImagePath]);
 
-        TourCountry::create($attributes);
+        $city = TourCity::make($attributes);
+        $city->country()->associate(TourCountry::find($request->get('country_id')));
+        $city->save();
 
         return response()->json(['success' => true]);
     }
 
-    public function updateTourCountry(Request $request, TourCountry $country): JsonResponse
+    public function updateTourCity(Request $request, TourCity $city): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'slug'        => ['string', Rule::unique(TourCountry::class)->ignore($country)],
             'name'        => ['string'],
+            'country_id'  => ['int', Rule::exists(TourCountry::class, 'id')],
             'description' => ['string'],
             'image'       => [
                 File::types(['jpeg', 'jpg', 'png']),
@@ -98,30 +90,32 @@ class TourCountryController extends Controller
             );
         }
 
-        $attributes = $request->only(['slug', 'name', 'description']);
+        $attributes = $request->only(['name', 'description']);
 
         $image = $request->file('image');
         if ($image !== null) {
-            $oldImagePath = substr_replace($country->image_path, 'public/', 0, strlen('storage/'));
+            $oldImagePath = substr_replace($city->image_path, 'public/', 0, strlen('storage/'));
             Storage::disk()->delete($oldImagePath);
 
-            $imagePath       = $image->storeAs('public/tour_countries/', $image->hashName());
+            $imagePath       = $image->storeAs('public/tour_cities/', $image->hashName());
             $publicImagePath = substr_replace($imagePath, 'storage/', 0, strlen('public/'));
 
             $attributes = array_merge($attributes, ['image_path' => $publicImagePath]);
         }
 
-        $country->update($attributes);
+        $city->update($attributes);
+        $city->country()->associate(TourCountry::find($request->get('country_id')));
+        $city->save();
 
         return response()->json(['success' => true]);
     }
 
-    public function deleteTourCountry(TourCountry $country): JsonResponse
+    public function deleteTourCity(TourCity $city): JsonResponse
     {
-        $imagePath = substr_replace($country->image_path, 'public/', 0, strlen('storage/'));
+        $imagePath = substr_replace($city->image_path, 'public/', 0, strlen('storage/'));
         Storage::disk()->delete($imagePath);
 
-        $country->delete();
+        $city->delete();
 
         return response()->json(['success' => true]);
     }

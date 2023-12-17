@@ -35,8 +35,12 @@ class TourCity extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'name',
+        'description',
+        'image_path'
     ];
 
     public function country(): BelongsTo

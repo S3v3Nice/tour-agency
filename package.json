@@ -6,6 +6,7 @@
         "build": "vite build"
     },
     "devDependencies": {
+        "@types/bootstrap": "^5.2.10",
         "@vue/tsconfig": "^0.4.0",
         "axios": "^1.6.2",
         "laravel-vite-plugin": "^0.8.0",

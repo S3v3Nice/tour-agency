@@ -3,6 +3,8 @@ import Header from "./Header.vue";
 import {onMounted, ref} from "vue";
 import {getAbsolutePath} from "../helpers.js";
 
+const countryApiUrl = 'tour-country';
+
 const isLoading = ref(false)
 const tourCountries = ref([])
 
@@ -13,7 +15,7 @@ onMounted(() => {
 function loadTourCountries() {
   isLoading.value = true
 
-  axios.get('/api/tour-countries').then((response) => {
+  axios.get(`/api/${countryApiUrl}`).then((response) => {
     tourCountries.value = response.data
   }).finally(() => {
     isLoading.value = false
