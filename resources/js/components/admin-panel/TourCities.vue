@@ -5,7 +5,7 @@ import axios from 'axios';
 import {getAbsolutePath} from "../../helpers.js";
 import {Country} from "./TourCountries.vue";
 
-interface City {
+export interface City {
   id?: bigint
   country_id?: bigint
   country?: Country
