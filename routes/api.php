@@ -5,6 +5,7 @@ use App\Http\Controllers\TourCityController;
 use App\Http\Controllers\TourController;
 use App\Http\Controllers\TourCountryController;
 use App\Http\Controllers\TourHotelController;
+use App\Http\Controllers\TourPaymentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -52,5 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/tour-booking', [TourBookingController::class, 'getTourBookings']);
         Route::put('/tour-booking/{booking}', [TourBookingController::class, 'verifyTourBooking']);
         Route::delete('/tour-booking/{booking}', [TourBookingController::class, 'deleteTourBooking']);
+
+        Route::get('/tour-payment', [TourPaymentController::class, 'getTourPayments']);
+        Route::delete('/tour-payment/{payment}', [TourPaymentController::class, 'deleteTourPayment']);
     });
 });

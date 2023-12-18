@@ -11,7 +11,7 @@ import TourCountries from "../components/admin-panel/TourCountries.vue";
 import TourCities from "../components/admin-panel/TourCities.vue";
 import TourHotels from "../components/admin-panel/TourHotels.vue";
 import TourBookings from "../components/admin-panel/TourBookings.vue";
-import Payments from "../components/admin-panel/Payments.vue";
+import TourPayments from "../components/admin-panel/TourPayments.vue";
 import Tours from "../components/admin-panel/Tours.vue";
 
 export default [
@@ -158,7 +158,7 @@ export default [
                 {
                     path: 'payments',
                     name: 'payments',
-                    component: Payments,
+                    component: TourPayments,
                     meta:
                         {
                             title: 'Платежи',
