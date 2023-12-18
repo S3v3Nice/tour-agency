@@ -2,27 +2,21 @@
 import {onMounted, ref} from 'vue';
 import {Modal} from 'bootstrap';
 import axios from 'axios';
-import {City} from "./TourCities.vue";
-
-export interface Hotel {
-  id?: bigint
-  city_id?: bigint
-  city?: City
-  name?: string
-}
+import {TourHotel} from "../../types/tourHotel";
+import {TourCity} from "../../types/tourCity";
 
 const apiUrl = 'tour-hotel';
 const cityApiUrl = 'tour-city';
 
 const isLoading = ref<boolean>(false)
-const items = ref<Hotel[]>([])
-const editedItem = ref<Hotel>({})
+const items = ref<TourHotel[]>([])
+const editedItem = ref<TourHotel>({})
 const addItemForm = ref<Modal>({})
 const editItemForm = ref<Modal>({})
 const deleteItemForm = ref<Modal>({})
 const formErrors = ref<string[][]>([])
 
-const cities = ref<City[]>([])
+const cities = ref<TourCity[]>([])
 
 onMounted(() => {
   load()
@@ -69,7 +63,7 @@ function submitAddItem() {
   })
 }
 
-function showEditForm(item: Hotel) {
+function showEditForm(item: TourHotel) {
   formErrors.value = {}
   editedItem.value = {...item}
   editItemForm.value.show()

@@ -3,24 +3,14 @@ import {onMounted, ref} from 'vue';
 import {Modal} from 'bootstrap';
 import axios from 'axios';
 import {getAbsolutePath} from "../../helpers.js";
-import {Country} from "./TourCountries.vue";
-
-export interface City {
-  id?: bigint
-  country_id?: bigint
-  country?: Country
-  name?: string
-  description?: string
-  image_path?: string
-  image?: File
-}
+import {TourCity} from "../../types/tourCity";
 
 const apiUrl = 'tour-city';
 const countryApiUrl = 'tour-country';
 
 const isLoading = ref<boolean>(false)
-const items = ref<City[]>([])
-const editedItem = ref<City>({})
+const items = ref<TourCity[]>([])
+const editedItem = ref<TourCity>({})
 const addItemForm = ref<Modal>({})
 const editItemForm = ref<Modal>({})
 const deleteItemForm = ref<Modal>({})
@@ -73,7 +63,7 @@ function submitAddItem() {
   })
 }
 
-function showEditForm(item: City) {
+function showEditForm(item: TourCity) {
   formErrors.value = {}
   editedItem.value = {...item}
   editItemForm.value.show()

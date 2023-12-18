@@ -2,19 +2,9 @@
 import {onMounted, ref} from 'vue';
 import {Modal} from 'bootstrap';
 import axios from 'axios';
-import {Hotel} from './TourHotels.vue'
 import {formatDateTime} from "../../helpers.js";
-
-export interface Tour {
-  id?: bigint
-  hotel_id?: bigint
-  hotel?: Hotel
-  start_date: string
-  end_date: string
-  max_participant_count: number
-  participant_count: number
-  adult_price: number
-}
+import {Tour} from "../../types/tour";
+import {TourHotel} from "../../types/tourHotel";
 
 const apiUrl = 'tour';
 const hotelApiUrl = 'tour-hotel';
@@ -27,7 +17,7 @@ const editItemForm = ref<Modal>({})
 const deleteItemForm = ref<Modal>({})
 const formErrors = ref<string[][]>([])
 
-const hotels = ref<Hotel[]>([])
+const hotels = ref<TourHotel[]>([])
 
 onMounted(() => {
   load()

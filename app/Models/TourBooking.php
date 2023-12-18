@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $is_verified
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read string $formatted_created_at
  * @property-read \App\Models\Tour $tour
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder|TourBooking newModelQuery()
@@ -57,10 +56,5 @@ class TourBooking extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function getFormattedCreatedAtAttribute(): string
-    {
-        return $this->created_at->format('d.m.Y H:i');
     }
 }

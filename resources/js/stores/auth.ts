@@ -1,21 +1,16 @@
 import axios from 'axios'
 import {defineStore} from 'pinia'
-
-interface UserState {
-    id: bigint | null
-    email: string
-    first_name: string | null
-    last_name: string | null
-    is_admin: boolean
-}
+import {User} from "../types/user";
 
 export const useAuthStore = defineStore('auth', {
-    state: (): UserState => ({
+    state: (): User => ({
         id: null,
         email: '',
         first_name: '',
         last_name: '',
         is_admin: false,
+        created_at: '',
+        updated_at: '',
     }),
     getters: {
         isAuthenticated: (state) => state.id != null,
@@ -33,7 +28,8 @@ export const useAuthStore = defineStore('auth', {
                 this.first_name = data.first_name
                 this.last_name = data.last_name
                 this.is_admin = data.is_admin
-
+                this.created_at = data.created_at
+                this.updated_at = data.updated_at
             }).catch(() => {
                 this.reset()
             })
