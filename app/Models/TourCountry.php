@@ -18,6 +18,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string $image_path
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TourCity> $cities
  * @property-read int|null $cities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Tour> $tours
+ * @property-read int|null $tours_count
  * @method static \Illuminate\Database\Eloquent\Builder|TourCountry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TourCountry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|TourCountry query()

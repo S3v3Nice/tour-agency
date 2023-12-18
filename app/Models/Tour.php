@@ -18,8 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property float $adult_price
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TourBooking> $bookings
  * @property-read int|null $bookings_count
- * @property-read string $formatted_end_date
- * @property-read string $formatted_start_date
  * @property-read int $participant_count
  * @property-read \App\Models\TourHotel $hotel
  * @method static \Illuminate\Database\Eloquent\Builder|Tour newModelQuery()
