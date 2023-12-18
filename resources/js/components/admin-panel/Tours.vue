@@ -2,31 +2,36 @@
 import {onMounted, ref} from 'vue';
 import {Modal} from 'bootstrap';
 import axios from 'axios';
-import {getAbsolutePath} from "../../helpers.js";
-import {Tour} from "./Tours.vue";
+import {Hotel} from './TourHotels.vue'
+import {formatDateTime} from "../../helpers.js";
 
-export interface Country {
+export interface Tour {
   id?: bigint
-  slug?: string
-  name?: string
-  description?: string
-  image_path?: string
-  image?: File,
-  tours?: Tour[]
+  hotel_id?: bigint
+  hotel?: Hotel
+  start_date: string
+  end_date: string
+  max_participant_count: number
+  participant_count: number
+  adult_price: number
 }
 
-const apiUrl = 'tour-country';
+const apiUrl = 'tour';
+const hotelApiUrl = 'tour-hotel';
 
 const isLoading = ref<boolean>(false)
-const items = ref<Country[]>([])
-const editedItem = ref<Country>({})
+const items = ref<Tour[]>([])
+const editedItem = ref<Tour>({})
 const addItemForm = ref<Modal>({})
 const editItemForm = ref<Modal>({})
 const deleteItemForm = ref<Modal>({})
 const formErrors = ref<string[][]>([])
 
+const hotels = ref<Hotel[]>([])
+
 onMounted(() => {
   load()
+  loadHotels()
   addItemForm.value = Modal.getOrCreateInstance('#addItemForm', {})
   editItemForm.value = Modal.getOrCreateInstance('#editItemForm', {})
   deleteItemForm.value = Modal.getOrCreateInstance('#confirmDeleteItemForm', {})
@@ -36,9 +41,14 @@ async function load() {
   isLoading.value = true
   await axios.get(`/api/${apiUrl}`).then((response) => {
     items.value = response.data
-    isLoading.value = false
   }).finally(() => {
     isLoading.value = false
+  })
+}
+
+async function loadHotels() {
+  await axios.get(`/api/${hotelApiUrl}`).then((response) => {
+    hotels.value = response.data
   })
 }
 
@@ -49,7 +59,7 @@ function showAddForm() {
 }
 
 function submitAddItem() {
-  let formData = new FormData()
+  const formData = new FormData()
   Object.keys(editedItem.value).forEach(key => formData.append(key, editedItem.value[key]))
 
   axios.post(`/api/${apiUrl}`, formData).then((response) => {
@@ -64,7 +74,7 @@ function submitAddItem() {
   })
 }
 
-function showEditForm(item: Country) {
+function showEditForm(item: Tour) {
   formErrors.value = {}
   editedItem.value = {...item}
   editItemForm.value.show()
@@ -99,12 +109,6 @@ function confirmDeleteItem() {
   })
 }
 
-function onImageUpload(event) {
-  const file = event.target.files[0]
-  if (file) {
-    editedItem.value.image = file
-  }
-}
 </script>
 
 <template>
@@ -117,9 +121,10 @@ function onImageUpload(event) {
     <table class="table mt-3">
       <thead class="thead-dark">
       <tr>
-        <th scope="col">Изображение</th>
-        <th scope="col">Название</th>
-        <th scope="col">Ярлык</th>
+        <th scope="col">Отель</th>
+        <th scope="col">Период</th>
+        <th scope="col">Кол-во участников</th>
+        <th scope="col">Стоимость</th>
         <th scope="col">Действия</th>
       </tr>
       </thead>
@@ -135,11 +140,10 @@ function onImageUpload(event) {
         </td>
       </tr>
       <tr v-else v-for="item in items" :key="item.id">
-        <td>
-          <img :src="getAbsolutePath(item.image_path)" :alt="item.name">
-        </td>
-        <td>{{ item.name }}</td>
-        <td>{{ item.slug }}</td>
+        <td>{{ `${item.hotel.name} (${item.hotel.city.name}, ${item.hotel.city.country.name})` }}</td>
+        <td>{{ `${formatDateTime(item.start_date)} - ${formatDateTime(item.end_date)}` }}</td>
+        <td>{{ item.max_participant_count }}</td>
+        <td>{{ item.adult_price }} ₽</td>
         <td>
           <button @click="showEditForm(item)" class="btn btn-sm btn-success me-2">
             <i class="bi bi-pencil-fill"></i>
@@ -164,35 +168,49 @@ function onImageUpload(event) {
           <div class="modal-body">
             <form @submit.prevent="submitAddItem">
               <div class="mb-3">
-                <label for="addItemName" class="form-label">Имя</label>
-                <input v-model="editedItem.name" type="text" class="form-control" id="addItemName"
-                       :class="{ 'is-invalid': 'name' in formErrors }">
-                <span v-if="'name' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['name'][0] }}
+                <label for="addItemHotel" class="form-label">Отель</label>
+                <select v-model="editedItem.hotel_id" class="form-select" id="addItemHotel"
+                        :class="{ 'is-invalid': 'hotel_id' in formErrors }">
+                  <option v-for="hotel in hotels" :key="hotel.id" :value="hotel.id">
+                    {{ `${hotel.name} (${hotel.city.name}, ${hotel.city.country.name})` }}
+                  </option>
+                </select>
+                <span v-if="'hotel_id' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['hotel_id'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="addItemSlug" class="form-label">Ярлык</label>
-                <input v-model="editedItem.slug" type="text" class="form-control" id="addItemSlug"
-                       :class="{ 'is-invalid': 'slug' in formErrors }">
-                <span v-if="'slug' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['slug'][0] }}
+                <label for="addItemStartDate" class="form-label">Дата начала</label>
+                <input v-model="editedItem.start_date" type="datetime-local" class="form-control" id="addItemStartDate"
+                       :class="{ 'is-invalid': 'start_date' in formErrors }">
+                <span v-if="'start_date' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['start_date'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="addItemDescription" class="form-label">Описание</label>
-                <textarea v-model="editedItem.description" class="form-control" id="addItemDescription"
-                          :class="{ 'is-invalid': 'description' in formErrors }"></textarea>
-                <span v-if="'description' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['description'][0] }}
+                <label for="addItemEndDate" class="form-label">Дата окончания</label>
+                <input v-model="editedItem.end_date" type="datetime-local" class="form-control" id="addItemEndDate"
+                       :class="{ 'is-invalid': 'end_date' in formErrors }">
+                <span v-if="'end_date' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['end_date'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="addItemImage" class="form-label">Изображение</label>
-                <input type="file" @change="onImageUpload" class="form-control" id="addItemImage"
-                       :class="{ 'is-invalid': 'image' in formErrors }">
-                <span v-if="'image' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['image'][0] }}
+                <label for="addItemMaxParticipantCount" class="form-label">Количество участников</label>
+                <input v-model="editedItem.max_participant_count" type="number" class="form-control"
+                       id="addItemMaxParticipantCount"
+                       :class="{ 'is-invalid': 'max_participant_count' in formErrors }">
+                <span v-if="'max_participant_count' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['max_participant_count'][0] }}
+                </span>
+              </div>
+              <div class="mb-3">
+                <label for="addItemAdultPrice" class="form-label">Стоимость за 1 взрослого</label>
+                <input v-model="editedItem.adult_price" type="number" step="any" class="form-control"
+                       id="addItemAdultPrice"
+                       :class="{ 'is-invalid': 'adult_price' in formErrors }">
+                <span v-if="'adult_price' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['adult_price'][0] }}
                 </span>
               </div>
 
@@ -217,35 +235,48 @@ function onImageUpload(event) {
           <div class="modal-body">
             <form @submit.prevent="submitEditItem">
               <div class="mb-3">
-                <label for="editItemName" class="form-label">Имя</label>
-                <input v-model="editedItem.name" type="text" class="form-control" id="editItemName"
-                       :class="{ 'is-invalid': 'name' in formErrors }">
-                <span v-if="'name' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['name'][0] }}
+                <label for="editItemHotel" class="form-label">Отель</label>
+                <select v-model="editedItem.hotel_id" class="form-select" id="editItemHotel">
+                  <option v-for="hotel in hotels" :key="hotel.id" :value="hotel.id">
+                    {{ `${hotel.name} (${hotel.city.name}, ${hotel.city.country.name})` }}
+                  </option>
+                </select>
+                <span v-if="'hotel_id' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['hotel_id'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="editItemSlug" class="form-label">Ярлык</label>
-                <input v-model="editedItem.slug" type="text" class="form-control" id="editItemSlug"
-                       :class="{ 'is-invalid': 'slug' in formErrors }">
-                <span v-if="'slug' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['slug'][0] }}
+                <label for="editItemStartDate" class="form-label">Дата начала</label>
+                <input v-model="editedItem.start_date" type="datetime-local" class="form-control" id="editItemStartDate"
+                       :class="{ 'is-invalid': 'start_date' in formErrors }">
+                <span v-if="'start_date' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['start_date'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="editItemDescription" class="form-label">Описание</label>
-                <textarea v-model="editedItem.description" class="form-control" id="editItemDescription"
-                          :class="{ 'is-invalid': 'description' in formErrors }"></textarea>
-                <span v-if="'description' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['description'][0] }}
+                <label for="editItemEndDate" class="form-label">Дата окончания</label>
+                <input v-model="editedItem.end_date" type="datetime-local" class="form-control" id="editItemEndDate"
+                       :class="{ 'is-invalid': 'end_date' in formErrors }">
+                <span v-if="'end_date' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['end_date'][0] }}
                 </span>
               </div>
               <div class="mb-3">
-                <label for="editItemImage" class="form-label">Изображение</label>
-                <input type="file" @change="onImageUpload" class="form-control" id="editItemImage"
-                       :class="{ 'is-invalid': 'image' in formErrors }">
-                <span v-if="'image' in formErrors" class="invalid-feedback mb-3" role="alert">
-                  {{ formErrors['image'][0] }}
+                <label for="editItemMaxParticipantCount" class="form-label">Количество участников</label>
+                <input v-model="editedItem.max_participant_count" type="number" class="form-control"
+                       id="editItemMaxParticipantCount"
+                       :class="{ 'is-invalid': 'max_participant_count' in formErrors }">
+                <span v-if="'max_participant_count' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['max_participant_count'][0] }}
+                </span>
+              </div>
+              <div class="mb-3">
+                <label for="editItemAdultPrice" class="form-label">Стоимость за 1 взрослого</label>
+                <input v-model="editedItem.adult_price" type="number" step="any" class="form-control"
+                       id="editItemAdultPrice"
+                       :class="{ 'is-invalid': 'adult_price' in formErrors }">
+                <span v-if="'adult_price' in formErrors" class="invalid-feedback mb-3" role="alert">
+                  {{ formErrors['adult_price'][0] }}
                 </span>
               </div>
 
@@ -313,11 +344,6 @@ function onImageUpload(event) {
 
 .table .btn {
   margin-right: 2px;
-}
-
-.table img {
-  max-width: 60px;
-  max-height: 60px;
 }
 
 .modal-content {

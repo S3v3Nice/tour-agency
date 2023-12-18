@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TourCityController;
+use App\Http\Controllers\TourController;
 use App\Http\Controllers\TourCountryController;
 use App\Http\Controllers\TourHotelController;
 use Illuminate\Http\Request;
@@ -39,6 +40,11 @@ Route::middleware('auth:sanctum')->group(
         Route::post('/tour-hotel', [TourHotelController::class, 'addTourHotel']);
         Route::put('/tour-hotel/{hotel}', [TourHotelController::class, 'updateTourHotel']);
         Route::delete('/tour-hotel/{hotel}', [TourHotelController::class, 'deleteTourHotel']);
+
+        Route::get('/tour', [TourController::class, 'getTours']);
+        Route::post('/tour', [TourController::class, 'addTour']);
+        Route::put('/tour/{tour}', [TourController::class, 'updateTour']);
+        Route::delete('/tour/{tour}', [TourController::class, 'deleteTour']);
     }
 );
 

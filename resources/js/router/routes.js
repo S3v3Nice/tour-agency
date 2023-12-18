@@ -12,6 +12,7 @@ import TourCities from "../components/admin-panel/TourCities.vue";
 import TourHotels from "../components/admin-panel/TourHotels.vue";
 import TourBookings from "../components/admin-panel/TourBookings.vue";
 import Payments from "../components/admin-panel/Payments.vue";
+import Tours from "../components/admin-panel/Tours.vue";
 
 export default [
     {
@@ -127,6 +128,18 @@ export default [
                     meta:
                         {
                             title: 'Отели',
+                            authenticated: true,
+                            admin: true,
+                        }
+                },
+
+                {
+                    path: 'tours',
+                    name: 'tours',
+                    component: Tours,
+                    meta:
+                        {
+                            title: 'Туры',
                             authenticated: true,
                             admin: true,
                         }

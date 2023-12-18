@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * App\Models\TourCountry
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  */
 class TourCountry extends Model
 {
+    use HasRelationships;
     use HasFactory;
 
     public $timestamps = false;
@@ -45,10 +47,9 @@ class TourCountry extends Model
         return $this->hasMany(TourCity::class, 'country_id');
     }
 
-    public function tours(): HasManyThrough
+    public function tours(): HasManyDeep
     {
-        return $this->hasManyThrough(Tour::class, TourHotel::class, 'city_id', 'hotel_id')
-                    ->whereIn('tour_hotels.city_id', $this->cities()->pluck('id'))
-                    ->with('hotel.city');
+        return $this->hasManyDeep(Tour::class, [TourCity::class, TourHotel::class],
+                                  ['country_id', 'city_id', 'hotel_id'])->with('hotel.city');
     }
 }

@@ -13,7 +13,7 @@ class TourHotelController extends Controller
 {
     public function getTourHotels(): JsonResponse
     {
-        return response()->json(TourHotel::with('city')->get());
+        return response()->json(TourHotel::with('city.country')->get());
     }
 
     public function addTourHotel(Request $request): JsonResponse

@@ -37,6 +37,8 @@ class Tour extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'start_date',
         'end_date',
@@ -45,8 +47,12 @@ class Tour extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_date' => 'date:Y-m-d\TH:i',
+        'end_date' => 'date:Y-m-d\TH:i',
+    ];
+
+    protected $appends = [
+        'participant_count'
     ];
 
     public function hotel(): BelongsTo
@@ -65,15 +71,5 @@ class Tour extends Model
             /** @var TourBooking $booking */
             return $booking->adults_count + $booking->children_count;
         });
-    }
-
-    public function getFormattedStartDateAttribute(): string
-    {
-        return $this->start_date->format('d.m.Y H:i');
-    }
-
-    public function getFormattedEndDateAttribute(): string
-    {
-        return $this->end_date->format('d.m.Y H:i');
     }
 }

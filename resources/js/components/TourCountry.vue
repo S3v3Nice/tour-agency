@@ -1,15 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import Header from "./Header.vue";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
-import {changeTitle, getAbsolutePath, isEmptyObject} from "../helpers.js";
+import {changeTitle, formatDateTime, getAbsolutePath, isEmptyObject} from "../helpers.js";
+import {Country} from 'admin-panel/TourCountries.vue'
+import axios from "axios";
 
 const props = defineProps({
   slug: String
 })
 const router = useRouter()
-const isLoading = ref(false)
-const data = ref({})
+const isLoading = ref<boolean>(false)
+const data = ref<Country>({})
 
 onMounted(() => {
   loadTourCountry().then(() => {
@@ -25,11 +27,6 @@ async function loadTourCountry() {
   }).finally(() => {
     isLoading.value = false
   })
-}
-
-function formatDate(dateString) {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
 }
 </script>
 
@@ -51,17 +48,18 @@ function formatDate(dateString) {
           <li v-for="tour in data.tours" :key="tour.id" class="list-group-item">
             <div class="row">
               <div class="col-md-3">
-                <img :src="getAbsolutePath(tour.hotel.city.image_path)" :alt="tour.hotel.city.name" class="img-fluid rounded"/>
+                <img :src="getAbsolutePath(tour.hotel.city.image_path)" :alt="tour.hotel.city.name"
+                     class="img-fluid rounded"/>
               </div>
               <div class="col-md-6">
                 <h4>{{ tour.hotel.city.name }}</h4>
-                <p>{{ formatDate(tour.start_date) }} - {{ formatDate(tour.end_date) }}</p>
+                <p>{{ formatDateTime(tour.start_date) }} - {{ formatDateTime(tour.end_date) }}</p>
                 <p>{{ tour.hotel.name }}</p>
                 <p>{{ tour.hotel.city.description }}</p>
               </div>
               <div class="col-md-3">
                 <button class="btn btn-primary w-100 mb-2">Записаться</button>
-                <p class="mb-2">Осталось мест: {{ tour.max_participant_count }}</p>
+                <p class="mb-2">Осталось мест: {{ tour.max_participant_count - tour.participant_count }}</p>
                 <p>Стоимость: {{ tour.adult_price }} ₽</p>
               </div>
             </div>
