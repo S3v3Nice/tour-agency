@@ -32,7 +32,6 @@ onMounted(() => {
   loadTourBookingsCountByCityData()
   loadTourBookingsCountByCountryData()
   loadTourOccupancyByCityData()
-  loadUserRegistrationData()
 })
 
 function loadTourBookingsCountByCityData() {
