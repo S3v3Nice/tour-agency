@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\TourBookingController;
 use App\Http\Controllers\TourCityController;
 use App\Http\Controllers\TourController;
@@ -56,5 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/tour-payment', [TourPaymentController::class, 'getTourPayments']);
         Route::delete('/tour-payment/{payment}', [TourPaymentController::class, 'deleteTourPayment']);
+
+        Route::get('/analytics', [AnalyticsController::class, 'getAnalytics']);
     });
 });
