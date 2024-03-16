@@ -1,6 +1,3 @@
-// Import our custom CSS
-import '../scss/app.scss'
-
 // Import all of Bootstrap's JS
 import 'bootstrap'
 
@@ -9,13 +6,13 @@ import 'bootstrap'
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
+import axios from 'axios'
 
-import axios from 'axios';
-window.axios = axios;
+window.axios = axios
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-window.axios.defaults.withCredentials = true;
-window.axios.defaults.withXSRFToken = true;
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+window.axios.defaults.withCredentials = true
+window.axios.defaults.withXSRFToken = true
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening

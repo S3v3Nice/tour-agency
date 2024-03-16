@@ -13,29 +13,31 @@ use Illuminate\Validation\Rule;
 
 class TourBookingController extends Controller
 {
-    const PREPAYMENT_RATE  = 0.5;
+    use ApiJsonResponseTrait;
+
+    const PREPAYMENT_RATE = 0.5;
     const CHILD_PRICE_RATE = 0.5;
 
     public function getTourBookings(): JsonResponse
     {
-        return response()->json(TourBooking::with(['user', 'tour.hotel.city.country'])->get());
+        $records = TourBooking::with(['user', 'tour.hotel.city.country'])->get();
+        return $this->successJsonResponse(
+            [
+                'records' => $records
+            ]
+        );
     }
 
     public function makeTourBooking(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'tour_id'        => ['required', 'int', Rule::exists(Tour::class, 'id')],
-            'adults_count'   => ['required', 'int', 'min:1'],
+            'tour_id' => ['required', 'int', Rule::exists(Tour::class, 'id')],
+            'adults_count' => ['required', 'int', 'min:1'],
             'children_count' => ['required', 'int', 'min:0'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
-            );
+            return $this->errorJsonResponse('', $validator->errors());
         }
 
         $tour = Tour::find($request->get('tour_id'));
@@ -44,14 +46,11 @@ class TourBookingController extends Controller
         $placesLeft = $tour->max_participant_count - $tour->participant_count;
 
         if (($adultsCount + $childrenCount) > $placesLeft) {
-            return response()->json(
+            return $this->errorJsonResponse(
+                '',
                 [
-                    'success' => false,
-                    'errors'  =>
-                        [
-                            'adults_count' => ['Количество участников превышает оставшееся количество мест: ' . $placesLeft]
-                        ],
-                ]
+                    'adults_count' => ['Количество участников превышает оставшееся количество мест: ' . $placesLeft]
+                ],
             );
         }
 
@@ -72,7 +71,7 @@ class TourBookingController extends Controller
         $payment->booking()->associate($booking);
         $payment->save();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function verifyTourBooking(TourBooking $booking): JsonResponse
@@ -80,13 +79,12 @@ class TourBookingController extends Controller
         $booking->is_verified = true;
         $booking->save();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function deleteTourBooking(TourBooking $booking): JsonResponse
     {
         $booking->delete();
-
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 }

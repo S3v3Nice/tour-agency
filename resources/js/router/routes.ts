@@ -1,20 +1,30 @@
-import Home from "../components/Home.vue";
-import Login from "../components/Login.vue";
-import Register from "../components/Register.vue";
-import Profile from "../components/Profile.vue";
-import NotFound from "../components/NotFound.vue";
-import TourCountry from "../components/TourCountry.vue";
-import AdminPanel from "../components/AdminPanel.vue";
-import Analytics from "../components/admin-panel/Analytics.vue";
-import Users from "../components/admin-panel/Users.vue";
-import TourCountries from "../components/admin-panel/TourCountries.vue";
-import TourCities from "../components/admin-panel/TourCities.vue";
-import TourHotels from "../components/admin-panel/TourHotels.vue";
-import TourBookings from "../components/admin-panel/TourBookings.vue";
-import TourPayments from "../components/admin-panel/TourPayments.vue";
-import Tours from "../components/admin-panel/Tours.vue";
+import Home from '@/components/Home.vue'
+import Login from '@/components/auth/Login.vue'
+import Profile from '@/components/Profile.vue'
+import NotFound from '@/components/NotFound.vue'
+import TourCountry from '@/components/TourCountry.vue'
+import AdminPanel from '@/components/AdminPanel.vue'
+import Analytics from '@/components/admin-panel/Analytics.vue'
+import TourCountries from '@/components/admin-panel/TourCountries.vue'
+import TourCities from '@/components/admin-panel/TourCities.vue'
+import TourHotels from '@/components/admin-panel/TourHotels.vue'
+import TourBookings from '@/components/admin-panel/TourBookings.vue'
+import TourPayments from '@/components/admin-panel/TourPayments.vue'
+import Tours from '@/components/admin-panel/Tours.vue'
+import type {Component} from 'vue'
+import type {RouteRecordRaw} from 'vue-router'
 
-export default [
+declare module 'vue-router' {
+    interface RouteMeta {
+        title: string
+        requiresAuth?: boolean
+        requiresGuest?: boolean
+        requiresAdmin?: boolean
+        defaultComponent?: Component
+    }
+}
+
+const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'home',
@@ -31,17 +41,7 @@ export default [
         meta:
             {
                 title: 'Вход в аккаунт',
-                guest: true,
-            }
-    },
-    {
-        path: '/register',
-        name: 'register',
-        component: Register,
-        meta:
-            {
-                title: 'Регистрация',
-                guest: true,
+                requiresGuest: true,
             }
     },
     {
@@ -51,7 +51,7 @@ export default [
         meta:
             {
                 title: 'Личный кабинет',
-                authenticated: true,
+                requiresAuth: true,
             }
     },
     {
@@ -62,108 +62,83 @@ export default [
         meta:
             {
                 title: 'Туры по направлению',
-                authenticated: true,
             }
     },
     {
         path: '/admin',
         name: 'admin',
         component: AdminPanel,
+        redirect: {name: 'admin.analytics'},
         meta:
             {
                 title: 'Админ-панель',
-                authenticated: true,
-                admin: true,
+                requiresAuth: true,
+                requiresAdmin: true,
             },
         children:
             [
                 {
                     path: 'analytics',
-                    name: 'analytics',
+                    name: 'admin.analytics',
                     component: Analytics,
                     meta:
                         {
                             title: 'Аналитика',
-                            authenticated: true,
-                            admin: true,
-                        }
-                },
-                {
-                    path: 'users',
-                    name: 'users',
-                    component: Users,
-                    meta:
-                        {
-                            title: 'Пользователи',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
                 {
                     path: 'countries',
-                    name: 'countries',
+                    name: 'admin.countries',
                     component: TourCountries,
                     meta:
                         {
                             title: 'Страны туров',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
                 {
                     path: 'cities',
-                    name: 'cities',
+                    name: 'admin.cities',
                     component: TourCities,
                     meta:
                         {
                             title: 'Города туров',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
                 {
                     path: 'hotels',
-                    name: 'hotels',
+                    name: 'admin.hotels',
                     component: TourHotels,
                     meta:
                         {
                             title: 'Отели',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
 
                 {
                     path: 'tours',
-                    name: 'tours',
+                    name: 'admin.tours',
                     component: Tours,
                     meta:
                         {
                             title: 'Туры',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
                 {
                     path: 'bookings',
-                    name: 'bookings',
+                    name: 'admin.bookings',
                     component: TourBookings,
                     meta:
                         {
                             title: 'Записи на туры',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
                 {
                     path: 'payments',
-                    name: 'payments',
+                    name: 'admin.payments',
                     component: TourPayments,
                     meta:
                         {
                             title: 'Платежи',
-                            authenticated: true,
-                            admin: true,
                         }
                 },
             ],
@@ -178,3 +153,5 @@ export default [
             }
     },
 ]
+
+export default routes

@@ -11,27 +11,31 @@ use Illuminate\Validation\Rule;
 
 class TourController extends Controller
 {
+    use ApiJsonResponseTrait;
+
     public function getTours(): JsonResponse
     {
-        return response()->json(Tour::with('hotel.city.country')->get());
+        $records = Tour::with('hotel.city.country')->get();
+        return $this->successJsonResponse([
+                'records' => $records
+            ]
+        );
     }
 
     public function addTour(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'hotel_id'          => ['required', 'int', Rule::exists(TourHotel::class, 'id')],
-            'start_date'        => ['required', 'date_format:Y-m-d\TH:i'],
-            'end_date'          => ['required', 'date_format:Y-m-d\TH:i'],
+            'hotel_id' => ['required', 'int', Rule::exists(TourHotel::class, 'id')],
+            'start_date' => ['required', 'date_format:Y-m-d\TH:i'],
+            'end_date' => ['required', 'date_format:Y-m-d\TH:i'],
             'max_participant_count' => ['required', 'int'],
-            'adult_price'       => ['required', 'numeric'],
+            'adult_price' => ['required', 'numeric'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
+            return $this->errorJsonResponse(
+                '',
+                $validator->errors()
             );
         }
 
@@ -39,25 +43,23 @@ class TourController extends Controller
         $hotel->hotel()->associate(TourHotel::find($request->get('hotel_id')));
         $hotel->save();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function updateTour(Request $request, Tour $tour): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'hotel_id'          => ['int', Rule::exists(TourHotel::class, 'id')],
-            'start_date'        => ['date_format:Y-m-d\TH:i'],
-            'end_date'          => ['date_format:Y-m-d\TH:i'],
+            'hotel_id' => ['int', Rule::exists(TourHotel::class, 'id')],
+            'start_date' => ['date_format:Y-m-d\TH:i'],
+            'end_date' => ['date_format:Y-m-d\TH:i'],
             'max_participant_count' => ['int'],
-            'adult_price'       => ['numeric'],
+            'adult_price' => ['numeric'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
+            return $this->errorJsonResponse(
+                '',
+                $validator->errors()
             );
         }
 
@@ -66,13 +68,12 @@ class TourController extends Controller
         }
         $tour->update($request->only(['start_date', 'end_date', 'max_participant_count', 'adult_price']));
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function deleteTour(Tour $tour): JsonResponse
     {
         $tour->delete();
-
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 }

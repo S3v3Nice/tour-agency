@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class AnalyticsController extends Controller
 {
+    use ApiJsonResponseTrait;
+
     public function getAnalytics(Request $request): JsonResponse
     {
         $results = [];
@@ -31,7 +33,9 @@ class AnalyticsController extends Controller
                 break;
         }
 
-        return response()->json($results);
+        return $this->successJsonResponse([
+            'results' => $results
+        ]);
     }
 
     private function getTourBookingsCountByCity($startDate, $endDate): array

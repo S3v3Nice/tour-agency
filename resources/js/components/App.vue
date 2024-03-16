@@ -1,11 +1,14 @@
-<script setup>
+<script setup lang="ts">
 
+import Header from '@/components/Header.vue'
 </script>
 
 <template>
-  <div class="container-lg">
-    <router-view></router-view>
-  </div>
+    <Header></Header>
+    <div class='container-lg mt-3'>
+        <router-view></router-view>
+    </div>
+
 </template>
 
 <style scoped>

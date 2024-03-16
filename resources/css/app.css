@@ -1,3 +1,6 @@
+@import "bootstrap/scss/bootstrap.scss";
+@import "vue3-toastify/dist/index.css";
+
 :root {
     --background-color: #ffffff;
     --background-color-muted: #f6f6f6;

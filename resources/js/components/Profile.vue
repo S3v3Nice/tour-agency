@@ -1,11 +1,7 @@
-<script setup>
-
-import Header from "./Header.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <Header></Header>
-  <a>Profile</a>
+    <a>Profile</a>
 </template>
 
 <style scoped>

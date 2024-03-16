@@ -13,20 +13,26 @@ use Illuminate\Validation\Rules\File;
 
 class TourCityController extends Controller
 {
+    use ApiJsonResponseTrait;
+
     const MAX_IMAGE_SIZE_MB = 5;
 
     public function getTourCities(Request $request): JsonResponse
     {
-        return response()->json(TourCity::with('country')->get());
+        $records = TourCity::with('country')->get();
+        return $this->successJsonResponse([
+                'records' => $records
+            ]
+        );
     }
 
     public function addTourCity(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name'        => ['required', 'string'],
-            'country_id'  => ['required', 'int', Rule::exists(TourCountry::class, 'id')],
+            'name' => ['required', 'string'],
+            'country_id' => ['required', 'int', Rule::exists(TourCountry::class, 'id')],
             'description' => ['required', 'string'],
-            'image'       => [
+            'image' => [
                 'required',
                 File::types(['jpeg', 'jpg', 'png']),
                 File::image()
@@ -40,18 +46,16 @@ class TourCityController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
+            return $this->errorJsonResponse(
+                '',
+                $validator->errors()
             );
         }
 
         $attributes = $request->only(['name', 'description']);
 
-        $image           = $request->file('image');
-        $imagePath       = $image->storeAs('public/tour_cities/', $image->hashName());
+        $image = $request->file('image');
+        $imagePath = $image->storeAs('public/tour_cities/', $image->hashName());
         $publicImagePath = substr_replace($imagePath, 'storage/', 0, strlen('public/'));
 
         $attributes = array_merge($attributes, ['image_path' => $publicImagePath]);
@@ -60,16 +64,16 @@ class TourCityController extends Controller
         $city->country()->associate(TourCountry::find($request->get('country_id')));
         $city->save();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function updateTourCity(Request $request, TourCity $city): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name'        => ['string'],
-            'country_id'  => ['int', Rule::exists(TourCountry::class, 'id')],
+            'name' => ['string'],
+            'country_id' => ['int', Rule::exists(TourCountry::class, 'id')],
             'description' => ['string'],
-            'image'       => [
+            'image' => [
                 File::types(['jpeg', 'jpg', 'png']),
                 File::image()
                     ->max(self::MAX_IMAGE_SIZE_MB * 1024)
@@ -82,11 +86,9 @@ class TourCityController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
+            return $this->errorJsonResponse(
+                '',
+                $validator->errors()
             );
         }
 
@@ -97,7 +99,7 @@ class TourCityController extends Controller
             $oldImagePath = substr_replace($city->image_path, 'public/', 0, strlen('storage/'));
             Storage::disk()->delete($oldImagePath);
 
-            $imagePath       = $image->storeAs('public/tour_cities/', $image->hashName());
+            $imagePath = $image->storeAs('public/tour_cities/', $image->hashName());
             $publicImagePath = substr_replace($imagePath, 'storage/', 0, strlen('public/'));
 
             $attributes = array_merge($attributes, ['image_path' => $publicImagePath]);
@@ -107,7 +109,7 @@ class TourCityController extends Controller
         $city->country()->associate(TourCountry::find($request->get('country_id')));
         $city->save();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function deleteTourCity(TourCity $city): JsonResponse
@@ -116,7 +118,6 @@ class TourCityController extends Controller
         Storage::disk()->delete($imagePath);
 
         $city->delete();
-
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 }

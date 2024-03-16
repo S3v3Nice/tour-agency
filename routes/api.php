@@ -21,42 +21,42 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/user', function (Request $request) {
+Route::get('/auth/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/tour-country', [TourCountryController::class, 'getTourCountries']);
-Route::get('/tour-country/{countrySlug}', [TourCountryController::class, 'getTourCountry']);
+Route::get('/tour-countries', [TourCountryController::class, 'getTourCountries']);
+Route::get('/tour-countries/{countrySlug}', [TourCountryController::class, 'getTourCountry']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/tour-booking', [TourBookingController::class, 'makeTourBooking']);
+    Route::post('/tour-bookings', [TourBookingController::class, 'makeTourBooking']);
 
     Route::middleware('admin')->group(function () {
-        Route::post('/tour-country', [TourCountryController::class, 'addTourCountry']);
-        Route::put('/tour-country/{country}', [TourCountryController::class, 'updateTourCountry']);
-        Route::delete('/tour-country/{country}', [TourCountryController::class, 'deleteTourCountry']);
+        Route::post('/tour-countries', [TourCountryController::class, 'addTourCountry']);
+        Route::put('/tour-countries/{country}', [TourCountryController::class, 'updateTourCountry']);
+        Route::delete('/tour-countries/{country}', [TourCountryController::class, 'deleteTourCountry']);
 
-        Route::get('/tour-city', [TourCityController::class, 'getTourCities']);
-        Route::post('/tour-city', [TourCityController::class, 'addTourCity']);
-        Route::put('/tour-city/{city}', [TourCityController::class, 'updateTourCity']);
-        Route::delete('/tour-city/{city}', [TourCityController::class, 'deleteTourCity']);
+        Route::get('/tour-cities', [TourCityController::class, 'getTourCities']);
+        Route::post('/tour-cities', [TourCityController::class, 'addTourCity']);
+        Route::put('/tour-cities/{city}', [TourCityController::class, 'updateTourCity']);
+        Route::delete('/tour-cities/{city}', [TourCityController::class, 'deleteTourCity']);
 
-        Route::get('/tour-hotel', [TourHotelController::class, 'getTourHotels']);
-        Route::post('/tour-hotel', [TourHotelController::class, 'addTourHotel']);
-        Route::put('/tour-hotel/{hotel}', [TourHotelController::class, 'updateTourHotel']);
-        Route::delete('/tour-hotel/{hotel}', [TourHotelController::class, 'deleteTourHotel']);
+        Route::get('/tour-hotels', [TourHotelController::class, 'getTourHotels']);
+        Route::post('/tour-hotels', [TourHotelController::class, 'addTourHotel']);
+        Route::put('/tour-hotels/{hotel}', [TourHotelController::class, 'updateTourHotel']);
+        Route::delete('/tour-hotels/{hotel}', [TourHotelController::class, 'deleteTourHotel']);
 
-        Route::get('/tour', [TourController::class, 'getTours']);
-        Route::post('/tour', [TourController::class, 'addTour']);
-        Route::put('/tour/{tour}', [TourController::class, 'updateTour']);
-        Route::delete('/tour/{tour}', [TourController::class, 'deleteTour']);
+        Route::get('/tours', [TourController::class, 'getTours']);
+        Route::post('/tours', [TourController::class, 'addTour']);
+        Route::put('/tours/{tour}', [TourController::class, 'updateTour']);
+        Route::delete('/tours/{tour}', [TourController::class, 'deleteTour']);
 
-        Route::get('/tour-booking', [TourBookingController::class, 'getTourBookings']);
-        Route::put('/tour-booking/{booking}', [TourBookingController::class, 'verifyTourBooking']);
-        Route::delete('/tour-booking/{booking}', [TourBookingController::class, 'deleteTourBooking']);
+        Route::get('/tour-bookings', [TourBookingController::class, 'getTourBookings']);
+        Route::put('/tour-bookings/{booking}', [TourBookingController::class, 'verifyTourBooking']);
+        Route::delete('/tour-bookings/{booking}', [TourBookingController::class, 'deleteTourBooking']);
 
-        Route::get('/tour-payment', [TourPaymentController::class, 'getTourPayments']);
-        Route::delete('/tour-payment/{payment}', [TourPaymentController::class, 'deleteTourPayment']);
+        Route::get('/tour-payments', [TourPaymentController::class, 'getTourPayments']);
+        Route::delete('/tour-payments/{payment}', [TourPaymentController::class, 'deleteTourPayment']);
 
         Route::get('/analytics', [AnalyticsController::class, 'getAnalytics']);
     });

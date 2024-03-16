@@ -12,21 +12,18 @@ use Illuminate\Validation\Rule;
 class AuthController extends Controller
 {
     use PasswordValidationRulesTrait;
+    use ApiJsonResponseTrait;
 
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'email'    => ['required', 'email'],
             'password' => ['required'],
+            'remember' => ['boolean'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
-            );
+            return $this->errorJsonResponse('', $validator->errors());
         }
 
         $attributes = [
@@ -35,15 +32,10 @@ class AuthController extends Controller
         ];
 
         if (!Auth::attempt($attributes, $request->get('remember', false))) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => ['email' => ['Неверный адрес эл. почты или пароль.']],
-                ]
-            );
+            return $this->errorJsonResponse('Неверный адрес эл. почты или пароль.');
         }
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function register(Request $request): JsonResponse
@@ -51,16 +43,12 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email'    => ['required', 'email', Rule::unique(User::class)],
             'password' => $this->getPasswordRules(),
-            'password_confirmation' => ['required']
+            'password_confirmation' => ['required'],
+            'remember' => ['boolean'],
         ]);
 
         if ($validator->fails()) {
-            return response()->json(
-                [
-                    'success' => false,
-                    'errors'  => $validator->errors(),
-                ]
-            );
+            return $this->errorJsonResponse('', $validator->errors());
         }
 
         $attributes = [
@@ -71,7 +59,7 @@ class AuthController extends Controller
         $user = User::create($attributes);
         Auth::login($user, $request->get('remember', false));
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 
     public function logout(Request $request): JsonResponse
@@ -79,6 +67,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->flush();
 
-        return response()->json(['success' => true]);
+        return $this->successJsonResponse();
     }
 }
