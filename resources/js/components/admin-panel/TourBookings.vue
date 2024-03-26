@@ -124,7 +124,11 @@ function confirmDeleteRecord() {
                     {{ record.tour!.hotel!.city!.country!.name }}), {{ formatDateTime(record.tour!.start_date!) }}
                 </td>
                 <td>{{ formatDateTime(record.created_at!) }}</td>
-                <td>{{ record.is_verified ? 'Подтверждено' : 'Не подтверждено' }}</td>
+                <td>
+                    <span class="badge" :class="{'bg-secondary': !record.is_verified, 'bg-success': record.is_verified}">
+                        {{ record.is_verified ? 'Подтверждено' : 'На рассмотрении' }}
+                    </span>
+                </td>
                 <td>
                     <button v-if="!record.is_verified" @click="showVerifyBookingForm(record)"
                             class="btn btn-sm btn-success me-2">
