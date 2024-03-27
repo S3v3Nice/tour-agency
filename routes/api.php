@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\TourBookingController;
 use App\Http\Controllers\TourCityController;
 use App\Http\Controllers\TourController;
@@ -30,6 +31,14 @@ Route::get('/tour-countries/{countrySlug}', [TourCountryController::class, 'getT
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tour-bookings', [TourBookingController::class, 'makeTourBooking']);
+
+    Route::put('/settings/profile', [SettingsController::class, 'changeProfileSettings']);
+    Route::put('/settings/security/email', [SettingsController::class, 'changeEmail']);
+    Route::put('/settings/security/password', [SettingsController::class, 'changePassword']);
+
+    Route::get('/users/{id}/tour-bookings', [TourBookingController::class, 'getByUser']);
+
+    Route::put('/tour-bookings/{booking}/pay-remaining', [TourBookingController::class, 'payRemainingAmount']);
 
     Route::middleware('admin')->group(function () {
         Route::post('/tour-countries', [TourCountryController::class, 'addTourCountry']);

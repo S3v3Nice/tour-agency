@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Tour;
 use App\Models\TourBooking;
 use App\Models\TourPayment;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class TourBookingController extends Controller
 {
@@ -20,7 +22,35 @@ class TourBookingController extends Controller
 
     public function getTourBookings(): JsonResponse
     {
-        $records = TourBooking::with(['user', 'tour.hotel.city.country'])->get();
+        $sortField = 'created_at';
+        $sortDirection = 'desc';
+
+        $records = TourBooking::with(['user', 'tour.hotel.city.country'])->orderBy($sortField, $sortDirection)->get();
+        return $this->successJsonResponse(
+            [
+                'records' => $records
+            ]
+        );
+    }
+
+    public function getByUser(Request $request, int $id): JsonResponse
+    {
+        /** @var User|null $user */
+        $user = User::find($id)->first();
+        $currentUser = Auth::user();
+
+        if ($user?->id !== $currentUser->id && !$currentUser->is_admin) {
+            throw new AccessDeniedHttpException();
+        }
+
+        if ($user == null) {
+            return $this->errorJsonResponse('Не найден пользователь с id ' . $id . '.');
+        }
+
+        $sortField = 'created_at';
+        $sortDirection = 'desc';
+
+        $records = TourBooking::whereUserId($id)->with(['user', 'tour.hotel.city.country'])->orderBy($sortField, $sortDirection)->get();
         return $this->successJsonResponse(
             [
                 'records' => $records
@@ -85,6 +115,32 @@ class TourBookingController extends Controller
     public function deleteTourBooking(TourBooking $booking): JsonResponse
     {
         $booking->delete();
+        return $this->successJsonResponse();
+    }
+
+    public function payRemainingAmount(int $bookingId): JsonResponse
+    {
+        /** @var TourBooking|null $booking */
+        $booking = TourBooking::find($bookingId)->first();
+
+        $currentUser = Auth::user();
+
+        if ($booking?->user_id !== $currentUser->id && !$currentUser->is_admin) {
+            throw new AccessDeniedHttpException();
+        }
+
+        if ($booking === null) {
+            return $this->errorJsonResponse('Не найдена запись на тур с id ' . $bookingId . '.');
+        }
+
+        if (!$booking->is_verified) {
+            return $this->errorJsonResponse('Нельзя доплатить неподтвержденную запись на тур.');
+        }
+
+        $payment = TourPayment::make(['amount' => $booking->total_amount - $booking->payed_amount]);
+        $payment->booking()->associate($booking);
+        $payment->save();
+
         return $this->successJsonResponse();
     }
 }

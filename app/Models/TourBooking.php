@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\TourBooking
@@ -32,6 +33,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder|TourBooking whereTourId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TourBooking whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TourBooking whereUserId($value)
+ * @property-read float $payed_amount
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\TourPayment> $payments
+ * @property-read int|null $payments_count
  * @mixin \Eloquent
  */
 class TourBooking extends Model
@@ -48,6 +52,10 @@ class TourBooking extends Model
         'is_verified' => false,
     ];
 
+    protected $appends = [
+        'payed_amount',
+    ];
+
     public function tour(): BelongsTo
     {
         return $this->belongsTo(Tour::class);
@@ -56,5 +64,15 @@ class TourBooking extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(TourPayment::class, 'booking_id');
+    }
+
+    public function getPayedAmountAttribute(): float
+    {
+        return $this->payments->sum(fn(TourPayment $payment) => $payment->amount);
     }
 }

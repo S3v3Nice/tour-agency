@@ -54,6 +54,8 @@ export interface TourBooking {
     tour?: Tour
     adults_count?: number
     children_count?: number
+    total_amount?: number
+    payed_amount?: number
     is_verified?: boolean
     created_at?: string
     updated_at?: string
