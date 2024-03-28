@@ -36,7 +36,7 @@ class TourBookingController extends Controller
     public function getByUser(Request $request, int $id): JsonResponse
     {
         /** @var User|null $user */
-        $user = User::find($id)->first();
+        $user = User::find($id);
         $currentUser = Auth::user();
 
         if ($user?->id !== $currentUser->id && !$currentUser->is_admin) {
@@ -121,7 +121,7 @@ class TourBookingController extends Controller
     public function payRemainingAmount(int $bookingId): JsonResponse
     {
         /** @var TourBooking|null $booking */
-        $booking = TourBooking::find($bookingId)->first();
+        $booking = TourBooking::find($bookingId);
 
         $currentUser = Auth::user();
 

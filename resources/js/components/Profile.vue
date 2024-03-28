@@ -47,7 +47,6 @@ function loadTourBookings() {
 }
 
 function payRemainingAmount(booking: TourBooking) {
-    console.log(JSON.stringify(booking))
     axios.put(`/api/tour-bookings/${booking.id}/pay-remaining`, profileForm.value).then((response) => {
         if (response.data.success) {
             toast.success('Доплата записи на тур прошла успешно.')
