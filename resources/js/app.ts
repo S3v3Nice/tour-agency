@@ -4,7 +4,7 @@ import App from '@/components/App.vue'
 import router from '@/router/index'
 import {createPinia} from 'pinia'
 import Vue3Toasity from 'vue3-toastify'
-import {useAuthStore} from '@/stores/auth'
+import VueDatePicker from '@vuepic/vue-datepicker'
 
 const pinia = createPinia()
 const app = createApp(App)
@@ -17,4 +17,7 @@ app.use(
         theme: 'colored',
     },
 )
+
+app.component('VueDatePicker', VueDatePicker);
+
 app.mount('#app')

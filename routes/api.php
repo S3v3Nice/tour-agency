@@ -29,6 +29,9 @@ Route::get('/auth/user', function (Request $request) {
 Route::get('/tour-countries', [TourCountryController::class, 'getTourCountries']);
 Route::get('/tour-countries/{countrySlug}', [TourCountryController::class, 'getTourCountry']);
 
+Route::get('/tour-cities', [TourCityController::class, 'getTourCities']);
+Route::get('/tours', [TourController::class, 'getTours']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tour-bookings', [TourBookingController::class, 'makeTourBooking']);
 
@@ -45,7 +48,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/tour-countries/{country}', [TourCountryController::class, 'updateTourCountry']);
         Route::delete('/tour-countries/{country}', [TourCountryController::class, 'deleteTourCountry']);
 
-        Route::get('/tour-cities', [TourCityController::class, 'getTourCities']);
         Route::post('/tour-cities', [TourCityController::class, 'addTourCity']);
         Route::put('/tour-cities/{city}', [TourCityController::class, 'updateTourCity']);
         Route::delete('/tour-cities/{city}', [TourCityController::class, 'deleteTourCity']);
@@ -55,7 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/tour-hotels/{hotel}', [TourHotelController::class, 'updateTourHotel']);
         Route::delete('/tour-hotels/{hotel}', [TourHotelController::class, 'deleteTourHotel']);
 
-        Route::get('/tours', [TourController::class, 'getTours']);
         Route::post('/tours', [TourController::class, 'addTour']);
         Route::put('/tours/{tour}', [TourController::class, 'updateTour']);
         Route::delete('/tours/{tour}', [TourController::class, 'deleteTour']);
