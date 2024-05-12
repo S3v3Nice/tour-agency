@@ -28,7 +28,7 @@ RUN \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
-    --install-dir=/usr/local/bin
+    --install-dir=/usr/bin
 
 # Set the uid, gid and home directory of the www-data user to default values
 RUN usermod  --uid 1000 www-data && \
