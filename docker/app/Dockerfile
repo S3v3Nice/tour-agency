@@ -18,10 +18,10 @@ RUN \
       bcmath \
       gd \
       zip && \
-    pecl install  \
-      apfd && \
-    docker-php-ext-enable  \
-      apfd && \
+    curl 'https://pecl.php.net/get/apfd-1.0.3.tgz' -o apfd-1.0.3.tgz && \
+    pecl install apfd-1.0.3.tgz && \
+    rm -rf apfd-1.0.3.tgz && \
+    docker-php-ext-enable apfd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
