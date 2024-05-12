@@ -3,7 +3,9 @@ version: '3'
 services:
     nginx:
         container_name: tour-agency_nginx
-        image: nginx
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
         ports:
             - "${NGINX_PORT}:80"
         volumes:
@@ -28,7 +30,9 @@ services:
 
     mysql:
         container_name: tour-agency_mysql
-        image: mysql:8.0
+        build:
+            context: .
+            dockerfile: docker/mysql/Dockerfile
         ports:
             - "${DB_PORT}:3306"
         restart: unless-stopped

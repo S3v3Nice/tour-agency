@@ -1,9 +1,6 @@
 FROM php:8.1-fpm
 
-ARG user=www-data
-ARG uid=1000
-
-# Install all necessary packets and php extensions
+# Install all necessary packets and extensions
 RUN \
     apt-get update && \
     apt-get install -y \
@@ -11,7 +8,9 @@ RUN \
       libpq-dev \
       libpng-dev \
       libzip-dev \
-      zip unzip \
+      zip  \
+      unzip \
+      npm  \
       git && \
     pecl config-set php_ini "${PHP_INI_DIR}/php.ini" && \
     docker-php-ext-install  \
@@ -29,13 +28,14 @@ RUN \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --filename=composer \
-    --install-dir=/usr/local/bin \
+    --install-dir=/usr/local/bin
 
-# Create system user to run Composer and Artisan Commands
-RUN useradd -G www-data -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
+# Set the uid, gid and home directory of the www-data user to default values
+RUN usermod  --uid 1000 www-data && \
+    groupmod --gid 1000 www-data && \
+    usermod -d /home/www-data www-data && \
+    mkdir /home/www-data && \
+    chown -R www-data:www-data /home/www-data
 
+USER www-data
 WORKDIR /var/www
-
-USER $user
