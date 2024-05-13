@@ -25,8 +25,7 @@ services:
             - ./:/var/www
             - ./docker/app/php.ini:/usr/local/etc/php/php.ini:ro
         depends_on:
-            mysql:
-                  condition: service_healthy
+            - mysql
 
     mysql:
         container_name: tour-agency_mysql
@@ -46,11 +45,6 @@ services:
             MYSQL_USER: ${DB_USERNAME}
             MYSQL_PASSWORD: ${DB_PASSWORD}
         command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-        healthcheck:
-            test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent" ]
-            interval: 5s
-            timeout: 20s
-            retries: 50
 
     node-vite:
         container_name: tour-agency_node-vite
