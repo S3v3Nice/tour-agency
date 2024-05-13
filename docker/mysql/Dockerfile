@@ -5,5 +5,5 @@ FROM mysql:8.0
 RUN usermod  --uid 1000 mysql
 RUN groupmod --gid 1000 mysql
 
-RUN mkdir /var/log/mysql
-RUN chmod 777 /var/log/mysql
+RUN mkdir -p /var/log/mysql
+RUN chmod -R 777 /var/log/mysql
